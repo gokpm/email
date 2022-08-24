@@ -1,3 +1,3 @@
-module email
+module github.com/gokpm/email
 
 go 1.18
