@@ -1,13 +1,21 @@
 # email
 
+## Summary
+
+Verify if an email address is syntactically valid and reachable.
+
 ## Description
 
-Verify if an email is valid and reachable.
+1. Verify if the email address is syntactically valid.
+2. Verify if the domain has valid nameserver (NS) records.
+3. Verify if the domain is not part of a disposable domain list.
+4. Verify if the domain has valid mail exchanger (MX) records.
+5. Verify if the Mail Transfer Agent (MTA) is reachable.
 
 ## Installation
 
-```sh
-go get github.com/gokpm/email
+```
+go get -u github.com/gokpm/email
 ```
 
 ## Example

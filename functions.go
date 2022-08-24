@@ -12,20 +12,29 @@ import (
 )
 
 func Verify(email string) (valid bool, err error) {
-	_, err = mail.ParseAddress(email)
+	/*
+		Verify if the email address is syntactically valid.
+	*/
+	e, err := mail.ParseAddress(email)
 	if err != nil {
 		return
 	}
-	i := strings.LastIndex(email, "@")
+	i := strings.LastIndex(e.Address, "@")
 	if i < 0 || i >= len(email)-1 {
 		err = ErrInvalidEmail
 		return
 	}
 	domain := email[i+1:]
+	/*
+		Verify if the domain has valid nameserver (NS) records.
+	*/
 	_, err = net.LookupNS(domain)
 	if err != nil {
 		return
 	}
+	/*
+		Verify if the domain is not part of a disposable domain list.
+	*/
 	resp, err := http.Get(disposableEmailsURL)
 	if err != nil {
 		return
@@ -50,6 +59,9 @@ func Verify(email string) (valid bool, err error) {
 	if err != nil {
 		return
 	}
+	/*
+		Verify if the domain has valid mail exchanger (MX) records.
+	*/
 	records, err := net.LookupMX(domain)
 	if err != nil {
 		return
@@ -58,6 +70,9 @@ func Verify(email string) (valid bool, err error) {
 		err = ErrNoMXRecords
 		return
 	}
+	/*
+		Verify if the Mail Transfer Agent (MTA) is reachable.
+	*/
 	host := records[0].Host
 	pref := records[0].Pref
 	for _, record := range records {
