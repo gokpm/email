@@ -21,5 +21,10 @@ go get -u github.com/gokpm/email
 ## Example
 
 ```
-valid, err = email.Verify(`user@example.com`)
+ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+defer cancel()
+valid, err = email.Verify(ctx, `user@example.com`)
+if err != nil {
+        return
+}
 ```

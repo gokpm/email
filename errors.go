@@ -3,7 +3,8 @@ package email
 import "errors"
 
 var (
-	ErrInvalidEmail    = errors.New("invalid email address")
-	ErrDisposableEmail = errors.New("disposable email address")
+	ErrInvalidEmail    = errors.New("invalid syntax")
+	ErrDisposableEmail = errors.New("disposable domain")
 	ErrNoMXRecords     = errors.New("mx record not found")
+	ErrTimeout         = errors.New("verification timed out")
 )

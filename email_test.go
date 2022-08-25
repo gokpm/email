@@ -1,10 +1,16 @@
 package email
 
-import "testing"
+import (
+	"context"
+	"testing"
+	"time"
+)
 
 func TestVerify(t *testing.T) {
 	for _, data := range testDataVerify {
-		valid, err := Verify(data.email)
+		ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+		defer cancel()
+		valid, err := Verify(ctx, data.email)
 		if valid == data.valid {
 			continue
 		}
