@@ -69,43 +69,40 @@ func signalVerification(ctx context.Context, email string) (ch chan error) {
 		return
 	}
 	resp, err := http.DefaultClient.Do(request)
-	if err != nil {
-		err = fmt.Errorf("%[1]s: %[2]v", email, err)
-		ch <- err
-		return
-	}
-	defer func() {
-		err = resp.Body.Close()
+	if err == nil {
+		defer func() {
+			err = resp.Body.Close()
+			if err != nil {
+				err = fmt.Errorf("%[1]s: %[2]v", email, err)
+				ch <- err
+				return
+			}
+		}()
+		bytes, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			err = fmt.Errorf("%[1]s: %[2]v", email, err)
 			ch <- err
 			return
 		}
-	}()
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		err = fmt.Errorf("%[1]s: %[2]v", email, err)
-		ch <- err
-		return
-	}
-	disposableDomains := []string{}
-	err = json.Unmarshal(bytes, &disposableDomains)
-	if err != nil {
-		err = fmt.Errorf("%[1]s: %[2]v", email, err)
-		ch <- err
-		return
-	}
-	for _, disposableDomain := range disposableDomains {
-		if !strings.EqualFold(domain, disposableDomain) {
-			continue
+		disposableDomains := []string{}
+		err = json.Unmarshal(bytes, &disposableDomains)
+		if err != nil {
+			err = fmt.Errorf("%[1]s: %[2]v", email, err)
+			ch <- err
+			return
 		}
-		err = fmt.Errorf("%[1]s: %[2]v", email, ErrDisposableEmail)
-		break
-	}
-	if err != nil {
-		err = fmt.Errorf("%[1]s: %[2]v", email, err)
-		ch <- err
-		return
+		for _, disposableDomain := range disposableDomains {
+			if !strings.EqualFold(domain, disposableDomain) {
+				continue
+			}
+			err = fmt.Errorf("%[1]s: %[2]v", email, ErrDisposableEmail)
+			break
+		}
+		if err != nil {
+			err = fmt.Errorf("%[1]s: %[2]v", email, err)
+			ch <- err
+			return
+		}
 	}
 	/*
 		Verify if the domain has valid mail exchanger (MX) records.

@@ -164,7 +164,7 @@ var testDataVerify = []struct {
 	},
 	{
 		email: `user@09gmail.com`,
-		valid: false,
+		valid: true,
 	},
 	{
 		email: `user@netplix.site`,
