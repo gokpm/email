@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func Verify(ctx context.Context, email string) (valid bool, err error) {
+func Verify(ctx context.Context, email string) (err error) {
 	if ctx == nil {
 		ctx = context.TODO()
 	}
@@ -21,10 +21,6 @@ func Verify(ctx context.Context, email string) (valid bool, err error) {
 	case <-ctx.Done():
 		err = fmt.Errorf("%[1]s: %[2]v", email, ErrTimeout)
 	}
-	if err != nil {
-		return
-	}
-	valid = true
 	return
 }
 

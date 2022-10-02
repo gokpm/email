@@ -10,7 +10,11 @@ func TestVerify(t *testing.T) {
 	for _, data := range testDataVerify {
 		ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 		defer cancel()
-		valid, err := Verify(ctx, data.email)
+		valid := false
+		err := Verify(ctx, data.email)
+		if err == nil {
+			valid = true
+		}
 		if valid == data.valid {
 			continue
 		}
@@ -164,7 +168,7 @@ var testDataVerify = []struct {
 	},
 	{
 		email: `user@09gmail.com`,
-		valid: true,
+		valid: false,
 	},
 	{
 		email: `user@netplix.site`,
